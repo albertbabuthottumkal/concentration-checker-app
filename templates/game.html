@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakhtiyarov Grid — Neural Breach</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav class="rail" aria-label="Primary navigation">
+        <a href="/" class="nb-logo" title="Neural Breach">
+            <span class="nb-monogram">NB</span>
+            <span class="nb-wordmark">Neural Breach</span>
+        </a>
+        <div class="rail-divider"></div>
+        <div class="rail-nav">
+            <a href="/" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 1L1 7v8h5v-4h4v4h5V7L8 1z" />
+                    </svg></span><span class="rail-label">Home</span></a>
+            <a href="/game" class="rail-link active"><span class="rail-icon"><svg viewBox="0 0 16 16"
+                        fill="currentColor">
+                        <rect x="1" y="1" width="4" height="4" rx="0.5" />
+                        <rect x="6" y="1" width="4" height="4" rx="0.5" />
+                        <rect x="11" y="1" width="4" height="4" rx="0.5" />
+                        <rect x="1" y="6" width="4" height="4" rx="0.5" />
+                        <rect x="6" y="6" width="4" height="4" rx="0.5" />
+                        <rect x="11" y="6" width="4" height="4" rx="0.5" />
+                        <rect x="1" y="11" width="4" height="4" rx="0.5" />
+                        <rect x="6" y="11" width="4" height="4" rx="0.5" />
+                        <rect x="11" y="11" width="4" height="4" rx="0.5" />
+                    </svg></span><span class="rail-label">Bakhtiyarov</span></a>
+            <a href="/constellation" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="none"
+                        stroke="currentColor" stroke-width="1">
+                        <circle cx="3" cy="3" r="1.5" fill="currentColor" stroke="none" />
+                        <circle cx="13" cy="5" r="1.5" fill="currentColor" stroke="none" />
+                        <circle cx="8" cy="10" r="1.5" fill="currentColor" stroke="none" />
+                        <circle cx="2" cy="13" r="1.5" fill="currentColor" stroke="none" />
+                        <line x1="3" y1="3" x2="13" y2="5" />
+                        <line x1="13" y1="5" x2="8" y2="10" />
+                        <line x1="8" y1="10" x2="2" y2="13" />
+                    </svg></span><span class="rail-label">Constellation</span></a>
+            <a href="/oddone" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="currentColor">
+                        <circle cx="3" cy="3" r="1.8" />
+                        <circle cx="8" cy="3" r="1.8" />
+                        <circle cx="13" cy="3" r="1.8" />
+                        <circle cx="3" cy="8" r="1.8" />
+                        <circle cx="8" cy="8" r="1.2" opacity="0.3" />
+                        <circle cx="13" cy="8" r="1.8" />
+                        <circle cx="3" cy="13" r="1.8" />
+                        <circle cx="8" cy="13" r="1.8" />
+                        <circle cx="13" cy="13" r="1.8" />
+                    </svg></span><span class="rail-label">Odd One Out</span></a>
+            <a href="/reflex" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M10 1L4 9h5l-3 6 8-9H9l1-5z" />
+                    </svg></span><span class="rail-label">Reflex Tap</span></a>
+            <a href="/stroop" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="currentColor">
+                        <circle cx="5" cy="5" r="3.5" />
+                        <circle cx="11" cy="5" r="3.5" opacity="0.5" />
+                        <circle cx="8" cy="11" r="3.5" opacity="0.75" />
+                    </svg></span><span class="rail-label">Color Switch</span></a>
+            <a href="/neural_breach" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="none"
+                        stroke="currentColor" stroke-width="1.5">
+                        <path d="M2 8h4l2-4 4 8 2-4h2" />
+                    </svg></span><span class="rail-label"
+                    style="color: var(--nb-phosphor, #00E5FF); text-shadow: 0 0 8px rgba(0,229,255,0.4);">Neural
+                    Breach</span></a>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="container game-page"
+            style="display:flex;flex-direction:column;align-items:center;max-width:860px;margin:0 auto;padding:28px 28px 60px;">
+            <h1
+                style="text-align:center;margin-bottom:18px;font-family:'Space Grotesk',sans-serif;font-size:1.9rem;font-weight:700;letter-spacing:-0.03em;color:#00F0FF;text-shadow:0 0 24px rgba(0,240,255,0.35);">
+                Bakhtiyarov Grid</h1>
+
+            <div class="header">
+                <div class="score-board">Score&ensp;<span id="score">0</span></div>
+                <div class="matrix-board">Grid&ensp;<span id="matrix-label">3×3</span></div>
+                <div class="timer-board">Time&ensp;<span id="timer">9</span>s</div>
+            </div>
+
+            <div id="message-area" class="message-area">
+                <h2 id="prompt-text">Get Ready…</h2>
+            </div>
+
+            <div class="game-area">
+                <div class="grid-container" id="grid"></div>
+            </div>
+
+            <!-- Explanation Modal -->
+            <div id="explanation-modal" class="modal">
+                <div class="modal-content">
+                    <h2>Bakhtiyarov Grid</h2>
+                    <div class="instructions-list">
+                        <p>Named after <strong>Oleg Bakhtiyarov</strong>, Soviet scientist who developed
+                            <strong>psychonetics</strong> in the late 1990s.
+                        </p>
+                        <p><strong>Deconcentration:</strong> Unlike focused attention, deconcentration trains your
+                            perceptive field to process multiple channels simultaneously.</p>
+                        <p><strong>Mechanism:</strong> Visual color + auditory number prompts force rapid cross-modal
+                            integration — building the capacity for expanded situational awareness.</p>
+                        <p><strong>Applications:</strong> Tactical environments, sports, driving, combat sports —
+                            anywhere multi-channel monitoring is required.</p>
+                    </div>
+                    <button id="continue-to-instructions-btn" class="btn">Continue</button>
+                </div>
+            </div>
+
+            <!-- Instructions Modal -->
+            <div id="instructions-modal" class="modal hidden">
+                <div class="modal-content">
+                    <h2>How to Play</h2>
+                    <div class="instructions-list">
+                        <p>🎨 <strong>Visual:</strong> Screen shows a color name to target</p>
+                        <p>🔊 <strong>Audio:</strong> Speaker announces the target number</p>
+                        <p>🎯 <strong>Objective:</strong> Click the box matching BOTH color AND number</p>
+                        <p>⏱️ <strong>Timer:</strong> Starts 9 s → shrinks to minimum 2 s per round</p>
+                        <p>📐 <strong>Grid scales:</strong> 3×3 → 4×4 at score 5 → 5×5 at score 12</p>
+                        <p>❌ <strong>Game Over:</strong> Wrong box or timeout</p>
+                    </div>
+                    <button id="start-game-btn" class="btn">Begin Protocol</button>
+                </div>
+            </div>
+
+            <!-- Game Over Modal -->
+            <div id="game-over-modal" class="modal hidden">
+                <div class="modal-content">
+                    <h2>Session Complete</h2>
+                    <span class="score-reveal" id="final-score">0</span>
+                    <span class="score-label">Score</span>
+                    <p>Recalibrate and push further.</p>
+                    <button id="retry-btn" class="btn">Retry</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- /page-content -->
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

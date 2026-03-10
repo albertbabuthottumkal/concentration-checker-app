@@ -1116,3 +1116,117 @@ body::before {
 .stroop-chip.flash-wrong {
     animation: flash-wrong 0.35s ease;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  MOBILE RESPONSIVENESS                                                      */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    :root {
+        --rail-w: 0px;
+    }
+
+    .rail {
+        bottom: 0;
+        top: auto;
+        height: 60px;
+        width: 100vw !important;
+        flex-direction: row;
+        border-right: none;
+        border-top: 1px solid var(--border);
+        padding: 5px 10px;
+        background: rgba(0, 0, 0, 0.85);
+    }
+
+    .rail:hover {
+        width: 100vw !important;
+        padding: 5px 10px;
+        align-items: center;
+    }
+
+    .nb-logo {
+        display: none;
+    }
+
+    .rail-divider {
+        display: none;
+    }
+
+    .rail-nav {
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 0;
+    }
+
+    .rail-link {
+        width: auto;
+        padding: 10px;
+        justify-content: center;
+    }
+
+    .rail-label {
+        display: none !important;
+    }
+
+    .page-content {
+        margin-left: 0;
+        margin-bottom: 60px;
+    }
+
+    .game-page-wrap {
+        padding: 15px 15px 75px;
+    }
+
+    /* Make the game grids responsive */
+    .grid-container {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    /* Modify specific games if they have fixed sizes in CSS */
+    #odd-grid,
+    #stroop-options {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    #reflex-arena {
+        width: 90vw;
+        height: 90vw;
+        max-height: 400px;
+        max-width: 400px;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero {
+        padding: 0 16px;
+        margin: 40px auto 30px;
+    }
+
+    .cards-scroll {
+        padding: 6px 16px 24px;
+    }
+
+    .section-label {
+        padding: 0 16px;
+    }
+
+    .modal-content,
+    .modal-box {
+        padding: 24px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .stroop-word-display {
+        font-size: 3rem;
+    }
+
+    .hud-chip {
+        padding: 5px 10px;
+        font-size: 0.85rem;
+    }
+}

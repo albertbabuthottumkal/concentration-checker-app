@@ -43,13 +43,24 @@ const colorNames = {
 // Returns { cols, boxCount, gridPx, boxPx, gapPx } for current score
 function getMatrixConfig() {
     let cols, gridPx, boxPx;
+    const maxGridWidth = Math.min(window.innerWidth - 40, 580);
+
     if (score < 5) {
-        cols = 3; gridPx = 360; boxPx = 100;
+        cols = 3; gridPx = Math.min(360, maxGridWidth);
     } else if (score < 12) {
-        cols = 4; gridPx = 480; boxPx = 95;
+        cols = 4; gridPx = Math.min(480, maxGridWidth);
     } else {
-        cols = 5; gridPx = 580; boxPx = 88;
+        cols = 5; gridPx = Math.min(580, maxGridWidth);
     }
+
+    if (score < 5) {
+        boxPx = Math.floor(gridPx * 100 / 360);
+    } else if (score < 12) {
+        boxPx = Math.floor(gridPx * 95 / 480);
+    } else {
+        boxPx = Math.floor(gridPx * 88 / 580);
+    }
+
     const boxCount = cols * cols;
     const gapPx = Math.floor((gridPx - cols * boxPx) / (cols + 1));
     return { cols, boxCount, gridPx, boxPx, gapPx };

@@ -116,7 +116,6 @@ function drawFrame() {
     // Sequence connector lines
     if (phase === 'showing' && showIdx > 1) drawLines(showIdx, false);
     if (phase === 'recall') {
-        drawLines(sequence.length, true);          // full ghost path
         drawLines(playerInput.length, false);      // player progress
     }
 

@@ -113,32 +113,8 @@ function drawFrame() {
         ctx.fill();
     }
 
-    // Sequence connector lines
-    if (phase === 'showing' && showIdx > 1) drawLines(showIdx, false);
-    if (phase === 'recall') {
-        drawLines(playerInput.length, false);      // player progress
-    }
-
     // Orbs
     orbs.forEach((o, i) => drawOrb(o, i, now));
-}
-
-function drawLines(upTo, ghost) {
-    ctx.save();
-    ctx.setLineDash(ghost ? [4, 7] : []);
-    const src = ghost ? sequence : (phase === 'showing' ? sequence : playerInput);
-    for (let i = 1; i < upTo; i++) {
-        if (src[i] === undefined || src[i - 1] === undefined) break;
-        const a = orbs[src[i - 1]], b = orbs[src[i]];
-        if (!a || !b) continue;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = ghost ? 'rgba(0,224,84,0.12)' : 'rgba(0,224,84,0.65)';
-        ctx.lineWidth = ghost ? 1 : 2;
-        ctx.stroke();
-    }
-    ctx.restore();
 }
 
 function drawOrb(o, idx, now) {

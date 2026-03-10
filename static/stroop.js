@@ -57,8 +57,8 @@ function nextRound() {
     clearInterval(timerTick);
     timerChip.classList.remove('warning');
 
-    // Number of colour options shown — grows with score (4 to 8)
-    const optionCount = Math.min(4 + Math.floor(score / 4), COLORS.length);
+    // Number of colour options shown — increases every round
+    const optionCount = Math.min(3 + score, COLORS.length);
 
     // Shuffle colours and pick subset
     const shuffled = [...COLORS].sort(() => Math.random() - 0.5).slice(0, optionCount);

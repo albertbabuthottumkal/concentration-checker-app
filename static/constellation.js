@@ -38,10 +38,6 @@ sizeCanvas();
 window.addEventListener('resize', () => { sizeCanvas(); if (orbs.length) generateOrbs(); });
 
 // ── State ─────────────────────────────────────────────────────────────────────
-const ORB_COUNT = 10;
-const ORB_R = 22;
-const MIN_DIST = 90;
-
 let orbs = [];
 let bgStars = [];
 let sequence = [];
@@ -56,17 +52,25 @@ let timerTick = null;
 let animId = null;
 let isActive = false;
 
+function getOrbConfig() {
+    const count = Math.min(6 + score * 2, 35);
+    const r = Math.max(12, 22 - Math.floor(score / 3));
+    const minDist = r * 3.5;
+    return { count, r, minDist };
+}
+
 // ── Generate orbs in scattered, non-grid positions ────────────────────────────
 function generateOrbs() {
     orbs = [];
     const w = canvas.width, h = canvas.height;
-    const margin = 55;
+    const { count, r, minDist } = getOrbConfig();
+    const margin = r + 20;
     let tries = 0;
-    while (orbs.length < ORB_COUNT && tries < 2000) {
+    while (orbs.length < count && tries < 4000) {
         const x = margin + Math.random() * (w - 2 * margin);
         const y = margin + Math.random() * (h - 2 * margin);
-        const ok = orbs.every(o => Math.hypot(x - o.x, y - o.y) >= MIN_DIST);
-        if (ok) orbs.push({ x, y, state: 'idle', litAt: 0 });
+        const ok = orbs.every(o => Math.hypot(x - o.x, y - o.y) >= minDist);
+        if (ok) orbs.push({ x, y, r: r, state: 'idle', litAt: 0 });
         tries++;
     }
 }
@@ -139,20 +143,20 @@ function drawLines(upTo, ghost) {
 }
 
 function drawOrb(o, idx, now) {
-    const { x, y, state } = o;
+    const { x, y, state, r = 22 } = o;
     const idlePulse = 0.5 + 0.5 * Math.sin(now * 1.4 + idx * 0.9);
 
     let fillColor, glowColor, glowR;
     if (state === 'active') {
-        fillColor = '#00e054'; glowColor = 'rgba(0,224,84,0.55)'; glowR = ORB_R * 2.6;
+        fillColor = '#00e054'; glowColor = 'rgba(0,224,84,0.55)'; glowR = r * 2.6;
     } else if (state === 'correct') {
-        fillColor = '#00e054'; glowColor = 'rgba(0,224,84,0.35)'; glowR = ORB_R * 2;
+        fillColor = '#00e054'; glowColor = 'rgba(0,224,84,0.35)'; glowR = r * 2;
     } else if (state === 'wrong') {
-        fillColor = '#e54040'; glowColor = 'rgba(229,64,64,0.55)'; glowR = ORB_R * 2.4;
+        fillColor = '#e54040'; glowColor = 'rgba(229,64,64,0.55)'; glowR = r * 2.4;
     } else {
         fillColor = '#2a3545';
         glowColor = `rgba(64,188,244,${0.05 + 0.04 * idlePulse})`;
-        glowR = ORB_R * 1.4;
+        glowR = r * 1.4;
     }
 
     // Glow halo
@@ -166,7 +170,7 @@ function drawOrb(o, idx, now) {
 
     // Orb body
     ctx.beginPath();
-    ctx.arc(x, y, ORB_R, 0, Math.PI * 2);
+    ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fillStyle = fillColor;
     ctx.fill();
 
@@ -179,7 +183,7 @@ function drawOrb(o, idx, now) {
     const clickStep = playerInput.indexOf(idx);
     if (phase === 'recall' && clickStep >= 0) {
         ctx.fillStyle = '#000';
-        ctx.font = `bold ${Math.floor(ORB_R * 0.78)}px Outfit, sans-serif`;
+        ctx.font = `bold ${Math.floor(r * 0.78)}px Outfit, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(clickStep + 1, x, y);
@@ -214,6 +218,8 @@ function nextRound() {
     clearTimer();
     playerInput = [];
     phase = 'idle';
+
+    generateOrbs();
     orbs.forEach(o => o.state = 'idle');
 
     // Build random sequence
@@ -259,7 +265,7 @@ function handleCanvasClick(e) {
     for (let i = 0; i < orbs.length; i++) {
         const o = orbs[i];
         if (playerInput.includes(i)) continue;
-        if (Math.hypot(cx - o.x, cy - o.y) <= ORB_R + 8) {
+        if (Math.hypot(cx - o.x, cy - o.y) <= (o.r || 22) + 8) {
             if (sequence[playerInput.length] === i) {
                 o.state = 'correct';
                 playerInput.push(i);

@@ -58,8 +58,8 @@ function nextRound() {
     roundEl.textContent = round;
     timerChip.classList.remove('warning');
 
-    // Circle count grows with score
-    const count = Math.min(6 + Math.floor(score / 3) * 3, 24);
+    // Circle count increases immediately after each click
+    const count = Math.min(6 + score * 2, 45);
 
     // How subtle the hue difference is — starts at 35°, shrinks to 8°
     const hueDiff = Math.max(8, 35 - score * 1.5);
@@ -71,8 +71,11 @@ function nextRound() {
     // Outlier has baseHue + hueDiff
     outlierIdx = Math.floor(Math.random() * count);
 
-    // Circle size — slightly smaller as grid grows
-    const circleSize = Math.max(50, 80 - Math.floor(score / 4) * 5);
+    // Calculate maximum circle size geometrically so they never overflow the grid horizontally
+    const gridW = gridEl.offsetWidth || Math.min(window.innerWidth - 40, 520);
+    const cols = Math.ceil(Math.sqrt(count * (gridW / 400)));
+    const sizeToFit = Math.floor((gridW - (cols * 14)) / cols);
+    const circleSize = Math.max(25, Math.min(80, sizeToFit));
 
     gridEl.innerHTML = '';
     for (let i = 0; i < count; i++) {

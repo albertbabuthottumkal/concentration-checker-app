@@ -23,11 +23,15 @@ document.getElementById('retry-btn').addEventListener('click', () => {
 });
 
 // ── Config ────────────────────────────────────────────────────────────────────
-const DOT_COUNT = 12;
-const DOT_R = 30;      // px radius
 const INIT_WINDOW = 1800;    // ms the orb stays lit
 const MIN_WINDOW = 500;
 const WIN_DECREASE = 80;      // ms reduction every 3 correct taps
+
+function getDotConfig() {
+    const count = Math.min(6 + score * 2, 45);
+    const radius = Math.max(14, 30 - Math.floor(score / 3) * 2);
+    return { count, radius };
+}
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let score = 0;
@@ -44,16 +48,17 @@ function buildArena() {
     dots = [];
     const W = arena.offsetWidth || 540;
     const H = arena.offsetHeight || 420;
-    const margin = DOT_R + 10;
+    const { count, radius } = getDotConfig();
+    const margin = radius + 10;
 
     // Place dots in a scattered pattern (no grid)
     const placed = [];
     let tries = 0;
 
-    while (placed.length < DOT_COUNT && tries < 3000) {
+    while (placed.length < count && tries < 4000) {
         const x = margin + Math.random() * (W - 2 * margin);
         const y = margin + Math.random() * (H - 2 * margin);
-        const ok = placed.every(p => Math.hypot(x - p.x, y - p.y) >= DOT_R * 2.8);
+        const ok = placed.every(p => Math.hypot(x - p.x, y - p.y) >= radius * 2.4);
         if (ok) placed.push({ x, y });
         tries++;
     }
@@ -62,10 +67,10 @@ function buildArena() {
         const el = document.createElement('div');
         el.className = 'reflex-dot';
         el.style.cssText = `
-            width:${DOT_R * 2}px;
-            height:${DOT_R * 2}px;
-            left:${p.x - DOT_R}px;
-            top:${p.y - DOT_R}px;
+            width:${radius * 2}px;
+            height:${radius * 2}px;
+            left:${p.x - radius}px;
+            top:${p.y - radius}px;
             background:#2c3440;
             color:var(--green);
         `;
@@ -142,7 +147,10 @@ function onDotClick(e) {
         windowEl.textContent = (windowMs / 1000).toFixed(1);
         if (windowMs <= 800) windowChip.classList.add('warning');
         promptEl.textContent = '✓  Nice!';
-        setTimeout(scheduleNext, 350);
+        setTimeout(() => {
+            buildArena();
+            scheduleNext();
+        }, 350);
     } else if (litIndex === -1) {
         // Tapped a dark dot while nothing is lit
         endGame('Wrong orb!');

@@ -264,11 +264,24 @@ function handleCanvasClick(e) {
 
     for (let i = 0; i < orbs.length; i++) {
         const o = orbs[i];
-        if (playerInput.includes(i)) continue;
+
+        // Don't skip if it's already in playerInput, because a sequence might contain repeats.
+        // We just check if the click intersects the orb.
         if (Math.hypot(cx - o.x, cy - o.y) <= (o.r || 22) + 8) {
-            if (sequence[playerInput.length] === i) {
+
+            const expectedOrbIdx = sequence[playerInput.length];
+
+            if (expectedOrbIdx === i) {
+                // Correct tap for this step in the sequence
                 o.state = 'correct';
+
+                // Clear state of other active Orbs to avoid visual confusion
+                orbs.forEach((orb, idx) => {
+                    if (idx !== i) orb.state = 'idle';
+                });
+
                 playerInput.push(i);
+
                 if (playerInput.length === seqLen) {
                     // Round complete
                     clearTimer();
@@ -280,10 +293,10 @@ function handleCanvasClick(e) {
                 }
             } else {
                 o.state = 'wrong';
-                orbs[sequence[playerInput.length]].state = 'active'; // reveal correct
+                orbs[expectedOrbIdx].state = 'active'; // reveal correct
                 endGame('Wrong orb!');
             }
-            return;
+            return; // Click handled
         }
     }
 }

@@ -11,8 +11,8 @@
         <a href="/" class="back-link">← Return to Hub</a>
         
         <div class="auth-card">
-            <h1 class="auth-title">Neural Synchronization</h1>
-            <p class="auth-subtitle">Establish connection to access performance data.</p>
+            <h1 class="auth-title">Log In</h1>
+            <p class="auth-subtitle">Log in to view your performance report.</p>
             
             {% if error %}
             <div class="auth-error">{{ error }}</div>
@@ -25,14 +25,14 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="password">Decryption Key</label>
+                    <label for="password">Password</label>
                     <input type="password" id="password" name="password" required class="auth-input">
                 </div>
                 
-                <button type="submit" class="auth-btn">Synchronize</button>
+                <button type="submit" class="auth-btn">Log In</button>
             </form>
             
-            <p class="auth-switch">Unregistered operator? <a href="{{ url_for('register') }}" class="cyan">Initialize profile</a></p>
+            <p class="auth-switch">Don't have an account? <a href="{{ url_for('register') }}" class="cyan">Create an Account</a></p>
         </div>
     </div>
 </body>

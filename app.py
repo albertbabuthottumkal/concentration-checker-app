@@ -124,6 +124,10 @@ def reflex():
 def stroop():
     return render_template('stroop.html')
 
+@app.route('/neural_breach')
+def neural_breach():
+    return render_template('neural_breach.html')
+
 # --- API Routes ---
 @app.route('/submit-score', methods=['POST'])
 def submit_score():

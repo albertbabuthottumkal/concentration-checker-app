@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Breach — Neural Training</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav class="rail" aria-label="Primary navigation">
+        <a href="/" class="nb-logo" title="Neural Breach">
+            <span class="nb-monogram">NB</span>
+            <span class="nb-wordmark">Neural Breach</span>
+        </a>
+        <div class="rail-divider"></div>
+        <div class="rail-nav">
+            <a href="/" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 1L1 7v8h5v-4h4v4h5V7L8 1z" />
+                    </svg></span><span class="rail-label">Home</span></a>
+            <a href="/game" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="1" y="1" width="4" height="4" rx="0.5" />
+                        <rect x="6" y="1" width="4" height="4" rx="0.5" />
+                        <rect x="11" y="1" width="4" height="4" rx="0.5" />
+                        <rect x="1" y="6" width="4" height="4" rx="0.5" />
+                        <rect x="6" y="6" width="4" height="4" rx="0.5" />
+                        <rect x="11" y="6" width="4" height="4" rx="0.5" />
+                        <rect x="1" y="11" width="4" height="4" rx="0.5" />
+                        <rect x="6" y="11" width="4" height="4" rx="0.5" />
+                        <rect x="11" y="11" width="4" height="4" rx="0.5" />
+                    </svg></span><span class="rail-label">Bakhtiyarov</span></a>
+            <a href="/constellation" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16"
+                        fill="none" stroke="currentColor" stroke-width="1">
+                        <circle cx="3" cy="3" r="1.5" fill="currentColor" stroke="none" />
+                        <circle cx="13" cy="5" r="1.5" fill="currentColor" stroke="none" />
+                        <circle cx="8" cy="10" r="1.5" fill="currentColor" stroke="none" />
+                        <circle cx="2" cy="13" r="1.5" fill="currentColor" stroke="none" />
+                        <line x1="3" y1="3" x2="13" y2="5" />
+                        <line x1="13" y1="5" x2="8" y2="10" />
+                        <line x1="8" y1="10" x2="2" y2="13" />
+                    </svg></span><span class="rail-label">Constellation</span></a>
+            <a href="/oddone" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="currentColor">
+                        <circle cx="3" cy="3" r="1.8" />
+                        <circle cx="8" cy="3" r="1.8" />
+                        <circle cx="13" cy="3" r="1.8" />
+                        <circle cx="3" cy="8" r="1.8" />
+                        <circle cx="8" cy="8" r="1.2" opacity="0.3" />
+                        <circle cx="13" cy="8" r="1.8" />
+                        <circle cx="3" cy="13" r="1.8" />
+                        <circle cx="8" cy="13" r="1.8" />
+                        <circle cx="13" cy="13" r="1.8" />
+                    </svg></span><span class="rail-label">Odd One Out</span></a>
+            <a href="/reflex" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M10 1L4 9h5l-3 6 8-9H9l1-5z" />
+                    </svg></span><span class="rail-label">Reflex Tap</span></a>
+            <a href="/stroop" class="rail-link"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="currentColor">
+                        <circle cx="5" cy="5" r="3.5" />
+                        <circle cx="11" cy="5" r="3.5" opacity="0.5" />
+                        <circle cx="8" cy="11" r="3.5" opacity="0.75" />
+                    </svg></span><span class="rail-label">Color Switch</span></a>
+            <a href="/neural_breach" class="rail-link active"><span class="rail-icon"><svg viewBox="0 0 16 16" fill="none"
+                        stroke="currentColor" stroke-width="1.5">
+                        <path d="M2 8h4l2-4 4 8 2-4h2" />
+                    </svg></span><span class="rail-label"
+                    style="color: var(--nb-phosphor, #00E5FF); text-shadow: 0 0 8px rgba(0,229,255,0.4);">Neural
+                    Breach</span></a>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="game-page-wrap">
+            <div class="game-nav">
+                <h1 class="game-title-h1">Neural Breach</h1>
+            </div>
+            <div class="hud">
+                <div class="hud-chip">Score <span class="val" id="nb-score">0</span></div>
+                <div class="hud-chip">Level <span class="val" id="nb-level">1</span></div>
+                <div class="hud-chip timer-chip" id="nb-timer-chip">Time <span class="val" id="nb-timer">—</span></div>
+            </div>
+            <div class="prompt-area">
+                <h2 id="nb-prompt">Get ready…</h2>
+            </div>
+
+            <!-- Sequence grid -->
+            <div id="nb-grid" style="
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 18px;
+                max-width: 380px;
+                margin: 24px auto 0;
+            "></div>
+        </div>
+    </div>
+
+    <!-- Explanation Modal -->
+    <div id="exp-modal" class="modal">
+        <div class="modal-box">
+            <h2>Neural Breach</h2>
+            <div class="instructions-list">
+                <p>A sequence memory challenge. Tiles will flash in a pattern — your task is to repeat it exactly.</p>
+                <p><strong>Watch:</strong> Tiles light up one by one in a random sequence.</p>
+                <p><strong>Repeat:</strong> Tap the same tiles, in the same order.</p>
+                <p>Each correct round adds one more tile to the sequence. How far can you go?</p>
+            </div>
+            <button id="exp-cont-btn" class="btn-green">Continue</button>
+        </div>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div id="instr-modal" class="modal hidden">
+        <div class="modal-box">
+            <h2>How to Play</h2>
+            <div class="instructions-list">
+                <p>🔵 <strong>Watch:</strong> Tiles will flash in sequence</p>
+                <p>🧠 <strong>Remember:</strong> Hold the exact order in memory</p>
+                <p>👆 <strong>Tap:</strong> Reproduce the sequence by clicking tiles</p>
+                <p>⏱️ <strong>Timer:</strong> 10 seconds once it's your turn</p>
+                <p>📈 <strong>Grows:</strong> +1 tile added per round</p>
+                <p>❌ <strong>Game Over:</strong> Wrong tile or timeout</p>
+            </div>
+            <button id="instr-start-btn" class="btn-green">Begin Protocol</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameover-modal" class="modal hidden">
+        <div class="modal-box">
+            <h2 id="gameover-title">Session Complete</h2>
+            <span class="score-reveal" id="nb-final-score">0</span>
+            <span class="score-label">Score</span>
+            <p>Sequence memory sharpens through deliberate repetition.</p>
+            <button id="retry-btn" class="btn-green">Retry</button>
+            <a href="/report" class="btn-green" style="text-decoration:none; display:inline-block; margin-top:8px; background: transparent; border: 1px solid var(--cyan,#00e5cc);">View Report</a>
+        </div>
+    </div>
+
+    <script>
+    /* ── Neural Breach — sequence memory tile game ─────── */
+
+    const grid        = document.getElementById('nb-grid');
+    const promptEl    = document.getElementById('nb-prompt');
+    const scoreEl     = document.getElementById('nb-score');
+    const levelEl     = document.getElementById('nb-level');
+    const timerEl     = document.getElementById('nb-timer');
+    const timerChip   = document.getElementById('nb-timer-chip');
+    const finalScore  = document.getElementById('nb-final-score');
+    const goTitle     = document.getElementById('gameover-title');
+
+    const expModal    = document.getElementById('exp-modal');
+    const instrModal  = document.getElementById('instr-modal');
+    const goModal     = document.getElementById('gameover-modal');
+
+    document.getElementById('exp-cont-btn').addEventListener('click', () => {
+        expModal.classList.add('hidden'); instrModal.classList.remove('hidden');
+    });
+    document.getElementById('instr-start-btn').addEventListener('click', () => {
+        instrModal.classList.add('hidden'); startGame();
+    });
+    document.getElementById('retry-btn').addEventListener('click', () => {
+        goModal.classList.add('hidden'); startGame();
+    });
+
+    const TILE_COUNT = 16;
+    let tiles = [], sequence = [], playerInput = [], seqLen = 3;
+    let score = 0, phase = 'idle', timerTick = null, isActive = false;
+
+    function buildGrid() {
+        grid.innerHTML = '';
+        tiles = [];
+        const cols = Math.min(4 + Math.floor(score / 5), 6);
+        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+        const count = cols * cols;
+        for (let i = 0; i < count; i++) {
+            const tile = document.createElement('div');
+            tile.style.cssText = `
+                aspect-ratio:1;
+                background:#1a2535;
+                border:2px solid rgba(0,229,255,0.15);
+                border-radius:10px;
+                cursor:pointer;
+                transition:background 0.15s, transform 0.1s;
+            `;
+            tile.addEventListener('click', () => onTileClick(i));
+            grid.appendChild(tile);
+            tiles.push(tile);
+        }
+    }
+
+    function flash(idx, color, ms) {
+        return new Promise(res => {
+            tiles[idx].style.background = color;
+            tiles[idx].style.boxShadow = `0 0 18px ${color}`;
+            setTimeout(() => {
+                tiles[idx].style.background = '#1a2535';
+                tiles[idx].style.boxShadow = '';
+                setTimeout(res, 80);
+            }, ms);
+        });
+    }
+
+    async function showSequence() {
+        promptEl.textContent = 'Watch the sequence…';
+        phase = 'showing';
+        for (const idx of sequence) {
+            await flash(idx, '#00e5cc', 500);
+        }
+        phase = 'recall';
+        promptEl.textContent = '↺ Now tap in order';
+        startTimer();
+    }
+
+    function onTileClick(i) {
+        if (phase !== 'recall' || !isActive) return;
+        const expected = sequence[playerInput.length];
+        if (expected === i) {
+            flash(i, '#00e054', 250);
+            playerInput.push(i);
+            if (playerInput.length === seqLen) {
+                clearInterval(timerTick);
+                score++;
+                seqLen++;
+                scoreEl.textContent = score;
+                levelEl.textContent = seqLen;
+                promptEl.textContent = '✓ Perfect!';
+                setTimeout(nextRound, 900);
+            }
+        } else {
+            flash(i, '#e54040', 400);
+            endGame('Wrong tile!');
+        }
+    }
+
+    function startTimer() {
+        let secs = Math.max(6, 12 - Math.floor(score / 3));
+        timerEl.textContent = secs;
+        timerChip.classList.remove('warning');
+        timerTick = setInterval(() => {
+            secs--;
+            timerEl.textContent = secs;
+            if (secs <= 3) timerChip.classList.add('warning');
+            if (secs <= 0) { clearInterval(timerTick); endGame("Time's up!"); }
+        }, 1000);
+    }
+
+    function nextRound() {
+        if (!isActive) return;
+        clearInterval(timerTick);
+        playerInput = [];
+        buildGrid();
+        sequence = [];
+        while (sequence.length < seqLen) {
+            const pick = Math.floor(Math.random() * tiles.length);
+            if (sequence[sequence.length - 1] !== pick) sequence.push(pick);
+        }
+        setTimeout(showSequence, 400);
+    }
+
+    function startGame() {
+        score = 0; seqLen = 3; isActive = true;
+        scoreEl.textContent = 0;
+        levelEl.textContent = 3;
+        timerEl.textContent = '—';
+        timerChip.classList.remove('warning');
+        goModal.classList.add('hidden');
+        nextRound();
+    }
+
+    function endGame(msg) {
+        isActive = false;
+        clearInterval(timerTick);
+        phase = 'idle';
+        finalScore.textContent = score;
+        goTitle.textContent = msg;
+        goModal.classList.remove('hidden');
+    }
+    </script>
+
+</body>
+
+</html>

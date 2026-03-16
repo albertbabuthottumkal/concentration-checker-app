@@ -127,4 +127,11 @@ function endGame(msg) {
     finalScore.textContent = score;
     goTitle.textContent = msg;
     goModal.classList.remove('hidden');
+    if (score > 0) {
+        fetch('/submit-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ game: 'Color Switch', score: score })
+        }).catch(err => console.error(err));
+    }
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — Neural Training</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <a href="/" class="back-link">← Return to Hub</a>
+        
+        <div class="auth-card">
+            <h1 class="auth-title">Profile Initialization</h1>
+            <p class="auth-subtitle">Create a new neural footprint.</p>
+            
+            {% if error %}
+            <div class="auth-error">{{ error }}</div>
+            {% endif %}
+            
+            <form action="{{ url_for('register') }}" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="username">Operator ID (Username)</label>
+                    <input type="text" id="username" name="username" required autocomplete="off" spellcheck="false" class="auth-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Decryption Key (Password)</label>
+                    <input type="password" id="password" name="password" required class="auth-input">
+                </div>
+                
+                <button type="submit" class="auth-btn">Initialize</button>
+            </form>
+            
+            <p class="auth-switch">Existing operator? <a href="{{ url_for('login') }}" class="cyan">Synchronize</a></p>
+        </div>
+    </div>
+</body>
+</html>

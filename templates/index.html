@@ -93,16 +93,15 @@
                 </span>
                 <span class="rail-label">Color Switch</span>
             </a>
-            <a href="/neural_breach" class="rail-link" data-label="Neural Breach">
+            <a href="/login" class="rail-link auth-link" data-label="Profile">
                 <span class="rail-icon">
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
                         xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2 8h4l2-4 4 8 2-4h2" />
+                        <circle cx="8" cy="5" r="3" />
+                        <path d="M2.5 14c0-3 3-5 5.5-5s5.5 2 5.5 5" />
                     </svg>
                 </span>
-                <span class="rail-label"
-                    style="color: var(--nb-phosphor, #00E5FF); text-shadow: 0 0 8px rgba(0,229,255,0.4);">Neural
-                    Breach</span>
+                <span class="rail-label auth-label">Profile / Login</span>
             </a>
         </div>
     </nav>
@@ -230,23 +229,24 @@
                     </div>
                 </a>
 
-                <!-- Neural Breach -->
-                <a href="/neural_breach" class="mode-card" id="card-nb"
-                    style="border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.03);">
-                    <div class="card-art art-nb" style="background: #000; position: relative;">
-                        <div
-                            style="position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,229,255,0.05) 2px, rgba(0,229,255,0.05) 3px);">
-                        </div>
-                        <div
-                            style="font-family: 'Space Grotesk', monospace; font-size: 2.8rem; font-weight: 700; color: #00E5FF; text-shadow: 0 0 16px rgba(0,229,255,0.8), 0 0 32px rgba(0,229,255,0.4); z-index: 1;">
-                            NB</div>
+                <!-- Scientific Report -->
+                <a href="/report" class="mode-card" id="card-report"
+                    style="border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02);">
+                    <div class="card-art art-report" style="background: #0a0a0a; position: relative; overflow: hidden;">
+                        <svg viewBox="0 0 180 140" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+                            <path d="M20 120 L50 80 L90 90 L130 40 L160 50" stroke="#00E5FF" stroke-width="3" fill="none" stroke-linejoin="round"/>
+                            <circle cx="50" cy="80" r="4" fill="#00E5FF" />
+                            <circle cx="90" cy="90" r="4" fill="#00E5FF" />
+                            <circle cx="130" cy="40" r="4" fill="#00E5FF" />
+                            <circle cx="160" cy="50" r="4" fill="#00E5FF" />
+                            <line x1="20" y1="120" x2="160" y2="120" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                        </svg>
                     </div>
                     <div class="card-body">
-                        <span class="card-tag" style="color: #00E5FF;">Data Stream</span>
-                        <h3 class="card-title">Neural Breach</h3>
-                        <p class="card-desc">High-speed sequence interception. Translate visual keys to keystrokes
-                            instantly.</p>
-                        <button class="card-play-btn" style="background: #00E5FF; color: #000;">Hack</button>
+                        <span class="card-tag" style="color: #00E5FF;">Analytics</span>
+                        <h3 class="card-title">Cognitive Report</h3>
+                        <p class="card-desc">Analyze your performance data. Requires neural synchronization (login).</p>
+                        <button class="card-play-btn" style="background: rgba(255,255,255,0.1); color: #fff;">View Report</button>
                     </div>
                 </a>
 

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Report — Neural Training</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="report-page">
+    <nav class="report-nav">
+        <a href="/" class="back-link">← Return to Hub</a>
+        <div class="user-info">
+            <span class="operator-id">Operator: {{ username }}</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Disconnect</a>
+        </div>
+    </nav>
+
+    <div class="report-container">
+        <header class="report-header">
+            <h1 class="report-title">Cognitive Performance Analysis</h1>
+            <p class="report-subtitle">Aggregated metrics across all training protocols.</p>
+        </header>
+
+        {% if stats %}
+        <div class="stats-grid">
+            {% for stat in stats %}
+            <div class="stat-card">
+                <h2 class="stat-game">{{ stat.game }}</h2>
+                <div class="stat-metrics">
+                    <div class="metric">
+                        <span class="metric-label">High Score</span>
+                        <span class="metric-value primary">{{ stat.high_score }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Average</span>
+                        <span class="metric-value">{{ stat.average_score }}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Attempts</span>
+                        <span class="metric-value">{{ stat.games_played }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-data">
+            <div class="no-data-icon">!</div>
+            <h2>Insufficient Data</h2>
+            <p>No training sessions recorded. Return to the hub and complete protocols to generate performance metrics.</p>
+            <a href="/" class="auth-btn" style="text-decoration: none; display: inline-block; text-align: center; margin-top: 1rem; width: auto; padding: 14px 28px;">Commence Training</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

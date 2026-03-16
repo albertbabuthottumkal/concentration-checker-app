@@ -301,4 +301,11 @@ function endGame(msg) {
     finalScore.textContent = score;
     gameoverTitle.textContent = msg;
     goModal.classList.remove('hidden');
+    if (score > 0) {
+        fetch('/submit-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ game: 'Constellation Path', score: score })
+        }).catch(err => console.error(err));
+    }
 }

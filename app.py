@@ -1,41 +1,15 @@
-import sqlite3
 import os
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+from supabase import create_client, Client
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'default_dev_key_for_session')
 
-# --- Database Setup ---
-DB_FILE = 'scores.db'
-
-def init_db():
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    # Create users table
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL
-        )
-    ''')
-    # Create scores table for all games
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS scores (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            game TEXT NOT NULL,
-            score INTEGER NOT NULL,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(user_id) REFERENCES users(id)
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-# Initialize the db on startup
-init_db()
+# --- Supabase Database Setup ---
+SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://dlpcqrurcqhojylfouyy.supabase.co')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscGNxcnVyY3Fob2p5bGZvdXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTU0MDAsImV4cCI6MjA4OTIzMTQwMH0.85wCbdghSKa2HvcGxS8Twlwanhn6yuUj0qajABs-q5s')
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @app.route('/')
 def index():
@@ -48,18 +22,16 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        conn = sqlite3.connect(DB_FILE)
-        c = conn.cursor()
-        c.execute('SELECT id, password_hash FROM users WHERE username = ?', (username,))
-        user = c.fetchone()
-        conn.close()
+        response = supabase.table('users').select('id, password_hash').eq('username', username).execute()
         
-        if user and check_password_hash(user[1], password):
-            session['user_id'] = user[0]
-            session['username'] = username
-            return redirect(url_for('report'))
-        else:
-            return render_template('login.html', error='Invalid username or password')
+        if response.data:
+            user = response.data[0]
+            if check_password_hash(user['password_hash'], password):
+                session['user_id'] = user['id']
+                session['username'] = username
+                return redirect(url_for('report'))
+            
+        return render_template('login.html', error='Invalid username or password')
             
     return render_template('login.html')
 
@@ -72,23 +44,15 @@ def register():
         if not username or not password:
             return render_template('register.html', error='All fields are required')
             
-        conn = sqlite3.connect(DB_FILE)
-        c = conn.cursor()
-        
-        c.execute('SELECT id FROM users WHERE username = ?', (username,))
-        if c.fetchone():
-            conn.close()
+        response = supabase.table('users').select('id').eq('username', username).execute()
+        if response.data:
             return render_template('register.html', error='Username already exists')
             
         hashed_password = generate_password_hash(password)
         try:
-            c.execute('INSERT INTO users (username, password_hash) VALUES (?, ?)', (username, hashed_password))
-            conn.commit()
-        except sqlite3.Error as e:
-            conn.close()
+            supabase.table('users').insert({'username': username, 'password_hash': hashed_password}).execute()
+        except Exception as e:
             return render_template('register.html', error='Database error occurred')
-            
-        conn.close()
         return redirect(url_for('login'))
         
     return render_template('register.html')
@@ -107,27 +71,27 @@ def report():
     user_id = session['user_id']
     username = session['username']
     
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    # Fetch user's scores grouped by game
-    c.execute('''
-        SELECT game, MAX(score), AVG(score), COUNT(*) 
-        FROM scores 
-        WHERE user_id = ? 
-        GROUP BY game
-    ''', (user_id,))
-    
-    stats_raw = c.fetchall()
-    conn.close()
+    response = supabase.table('scores').select('game, score').eq('user_id', user_id).execute()
     
     # Process stats for template
+    game_stats = {}
+    for row in response.data:
+        g = row['game']
+        s = row['score']
+        if g not in game_stats:
+            game_stats[g] = {'high_score': s, 'total': s, 'count': 1}
+        else:
+            game_stats[g]['high_score'] = max(game_stats[g]['high_score'], s)
+            game_stats[g]['total'] += s
+            game_stats[g]['count'] += 1
+            
     stats = []
-    for row in stats_raw:
+    for g, data in game_stats.items():
         stats.append({
-            'game': row[0],
-            'high_score': row[1],
-            'average_score': round(row[2], 1),
-            'games_played': row[3]
+            'game': g,
+            'high_score': data['high_score'],
+            'average_score': round(data['total'] / data['count'], 1),
+            'games_played': data['count']
         })
         
     return render_template('report.html', username=username, stats=stats)
@@ -168,13 +132,14 @@ def submit_score():
     game = data['game']
     user_id = session['user_id']
     
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-    
-    # Insert new score
-    c.execute('INSERT INTO scores (user_id, game, score) VALUES (?, ?, ?)', (user_id, game, score))
-    conn.commit()
-    conn.close()
+    try:
+        supabase.table('scores').insert({
+            'user_id': user_id, 
+            'game': game, 
+            'score': score
+        }).execute()
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     
     return jsonify({'message': 'Score saved successfully'}), 200
 
